@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beleza Pura - Página Inicial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-pink-50 text-gray-800">
+
+  <!-- Formulário de Agendamento -->
+  <section class="p-6">
+    <h1 class="text-3xl font-bold text-pink-600 mb-6 text-center">Agendamento teste</h1>
+    <form id="formAgendamento" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow">
+      <label for="nome">Seu nome</label>
+      <input type="text" id="nome" name="nome" required class="w-full p-2 border rounded mb-4"/>
+
+      <label for="servico">Serviço desejado</label>
+      <select id="servico" name="servico" required class="w-full p-2 border rounded mb-4">
+        <option value="">Selecione...</option>
+        <option value="Corte Feminino">Corte Feminino</option>
+        <option value="Manicure">Manicure</option>
+        <option value="Sobrancelha">Sobrancelha</option>
+      </select>
+
+      <label for="profissional">Profissional</label>
+      <select id="profissional" name="profissional" required class="w-full p-2 border rounded mb-4">
+        <option value="">Selecione...</option>
+        <option value="Ana - Cabelos">Ana - Cabelos</option>
+        <option value="Bruna - Manicure">Bruna - Manicure</option>
+        <option value="Camila - Sobrancelha">Camila - Sobrancelha</option>
+      </select>
+
+      <label for="data">Data</label>
+      <input type="date" id="data" name="data" required class="w-full p-2 border rounded mb-4"/>
+
+      <label for="hora">Hora</label>
+      <input type="time" id="hora" name="hora" required class="w-full p-2 border rounded mb-4"/>
+
+      <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">Confirmar Agendamento</button>
+    </form>
+  </section>
+
+  <!-- Firebase + Script do Agendamento -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCfgnc5AXlriWYXPP1uHMNJphq_13FhvwA",
+      authDomain: "beleza-pura-agendamentos.firebaseapp.com",
+      projectId: "beleza-pura-agendamentos",
+      storageBucket: "beleza-pura-agendamentos.appspot.com",
+      messagingSenderId: "692542337721",
+      appId: "1:692542337721:web:b221d1328a092239712168",
+      measurementId: "G-226NBLF9SE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    // Escuta envio do formulário
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("formAgendamento");
+      if (!form) return;
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const nome = this.querySelector('[name="nome"]').value;
+        const servico = this.querySelector('[name="servico"]').value;
+        const profissional = this.querySelector('[name="profissional"]').value;
+        const data = this.querySelector('[name="data"]').value;
+        const hora = this.querySelector('[name="hora"]').value;
+
+        const horario = new Date(`${data}T${hora}`);
+
+
+        const q = query(
+          collection(db, "agendamentos"),
+          where("horario", "==", horario),
+          where("profissional", "==", profissional)
+        );
+
+        const resultado = await getDocs(q);
+
+        if (!resultado.empty) {
+          alert("Já existe um agendamento para esse horário com esse profissional.");
+          return;
+        }
+
+        await addDoc(collection(db, "agendamentos"), {
+          nome,
+          servico,
+          profissional,
+          horario,
+          criadoEm: new Date()
+        });
+
+        alert("Agendamento realizado com sucesso!");
+        this.reset();
+      });
+    });
+  </script>
+</body>
+</html>
+

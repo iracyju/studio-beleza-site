@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beleza Pura - Página Inicial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+  <style>
+    body {
+      font-family: "Segoe UI", "Roboto", sans-serif;
+      background-color: #fff8fb;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    main {
+      min-height: 100vh;
+    }
+
+    section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #d81b60;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: #d81b60;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      color: #c2185b;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      margin: 12px auto;
+      max-width: 320px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .button {
+      background-color: #e91e63;
+      color: #fff;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 32px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 24px;
+      box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #c2185b;
+    }
+
+    .carrossel {
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      height: 100px;
+    }
+
+    .slide {
+      display: none;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: #444;
+    }
+
+    .slide.ativo {
+      display: block;
+    }
+  </style>
+</head>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfgnc5AXlriWYXPP1uHMNJphq_13FhvwA",
+    authDomain: "beleza-pura-agendamentos.firebaseapp.com",
+    projectId: "beleza-pura-agendamentos",
+    storageBucket: "beleza-pura-agendamentos.appspot.com",
+
+    messagingSenderId: "692542337721",
+    appId: "1:692542337721:web:b221d1328a092239712168",
+    measurementId: "G-226NBLF9SE"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+  
+</script>
+<script>
+  document.getElementById('formAgendamento').addEventListener('submit', async function(e) {
+    e.preventDefault();
+  
+    const nome = this.nome.value;
+    const horario = this.horario.value;
+    const profissional = this.profissional.value;
+  
+    // Verifica se já existe agendamento no mesmo horário e profissional
+    const existe = await db.collection('agendamentos')
+      .where('horario', '==', horario)
+      .where('profissional', '==', profissional)
+      .get();
+  
+    if (!existe.empty) {
+      alert('Já existe um agendamento para esse horário com esse profissional.');
+      return;
+    }
+  
+    await db.collection('agendamentos').add({
+      nome,
+      horario,
+      profissional,
+      criadoEm: new Date()
+    });
+  
+    alert('Agendamento realizado com sucesso!');
+    this.reset();
+  });
+  </script>
+  
+
+<body class="bg-pink-50 text-gray-800">
+
+  <!-- Cabeçalho -->
+  <section class="bg-white shadow-md py-12 px-6 text-center">
+    <h1 class="text-4xl font-bold mb-4">Bem-vinda ao Beleza Pura</h1>
+    <p class="text-lg">Seu espaço de beleza e bem-estar</p>
+    <a href="agendamento.html" class="inline-block mt-6 bg-pink-400 text-white px-6 py-3 rounded-2xl hover:bg-pink-500 transition">Agende um horário</a>
+  </section>
+
+  <!-- Seções principais -->
+  <!-- Linha 1: Três cards principais -->
+<section class="py-12 px-6 grid md:grid-cols-3 gap-6">
+  <!-- Nossos Serviços -->
+  <a href="servicos.html" class="no-underline">
+    <div class="text-center bg-white p-6 rounded-lg shadow hover:bg-pink-100 transition cursor-pointer">
+      <img src="https://img.icons8.com/ios-filled/50/fa9cb4/scissors.png" alt="Serviços" class="mx-auto mb-4 h-12">
+      <h2 class="text-xl font-semibold text-pink-600">Nossos Serviços</h2>
+      <p class="mt-2 text-sm text-gray-600">Corte, escova, manicure, sobrancelha e muito mais</p>
+    </div>
+  </a>
+
+  <!-- Agendamento Fácil -->
+  <a href="agendamento.html" class="no-underline">
+    <div class="text-center bg-white p-6 rounded-lg shadow hover:bg-pink-100 transition cursor-pointer">
+      <img src="https://img.icons8.com/ios-filled/50/fa9cb4/planner.png" alt="Agendamento" class="mx-auto mb-4 h-12">
+      <h2 class="text-xl font-semibold text-pink-600">Agendamento Fácil</h2>
+      <p class="mt-2 text-sm text-gray-600">Escolha o serviço, profissional e horário online</p>
+    </div>
+  </a>
+
+  <!-- Contato Rápido -->
+  <a href="https://wa.me/5599999999999" target="_blank" class="no-underline">
+    <div class="text-center bg-white p-6 rounded-lg shadow hover:bg-pink-100 transition cursor-pointer">
+      <img src="https://img.icons8.com/ios-filled/50/fa9cb4/phone.png" alt="Contato" class="mx-auto mb-4 h-12">
+      <h2 class="text-xl font-semibold text-pink-600">Contato Rápido</h2>
+      <p class="mt-2 text-sm text-gray-600">Fale conosco pelo WhatsApp em um clique</p>
+    </div>
+  </a>
+</section>
+
+<!-- Linha 2: Card de Depoimentos -->
+<section class="depoimentos-section relative">
+  <h2 class="text-xl font-bold text-pink-600 mb-4">Depoimentos</h2>
+  
+  <div class="carrossel relative mx-auto max-w-xl bg-white rounded-xl shadow p-6">
+    <div class="slide ativo text-sm italic text-gray-700">“Simplesmente maravilhoso! Atendimento impecável.”</div>
+    <div class="slide hidden text-sm italic text-gray-700">“Profissionais excelentes e ambiente acolhedor.”</div>
+    <div class="slide hidden text-sm italic text-gray-700">“O melhor salão da região! Sempre saio feliz com o resultado.”</div>
+
+    <!-- Setas -->
+    <div class="absolute top-1/2 left-0 transform -translate-y-1/2 px-2">
+      <button id="anterior" class="text-pink-500 text-3xl hover:text-pink-700">‹</button>
+    </div>
+    <div class="absolute top-1/2 right-0 transform -translate-y-1/2 px-2">
+      <button id="proximo" class="text-pink-500 text-3xl hover:text-pink-700">›</button>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+  <!-- Endereço -->
+  <section class="bg-white py-10 px-6 text-center">
+    <h3 class="text-2xl font-bold mb-2">Nosso Endereço</h3>
+    <div class="flex justify-center items-center text-sm text-gray-600">
+      <img src="https://img.icons8.com/ios-filled/24/fa9cb4/marker.png" alt="Localização" class="mr-2">
+      Rua das Flores,000- Centro, São Paulo - SP
+    </div>
+  </section>
+
+  <!-- Botão Flutuante WhatsApp -->
+  <a href="https://wa.me/5599999999999" target="_blank"
+     class="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg z-50">
+    <img src="https://img.icons8.com/ios-filled/30/ffffff/whatsapp.png" alt="WhatsApp">
+  </a>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+  
+      function mostrarProximoSlide() {
+        slides[currentSlide].classList.remove("ativo");
+        slides[currentSlide].classList.add("hidden");
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add("ativo");
+        slides[currentSlide].classList.remove("hidden");
+      }
+  
+      setInterval(mostrarProximoSlide, 4000);
+    });
+  </script>
+  
+  
+  
+
+</body>
+</html>
+
